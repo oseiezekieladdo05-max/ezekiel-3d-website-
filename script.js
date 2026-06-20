@@ -1,6 +1,7 @@
 // ===== BASIC SETUP =====
 const scene = new THREE.Scene();
 
+// Camera
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -8,8 +9,8 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
+// Renderer (FIXED)
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.getElementById("scene"),
   alpha: true,
   antialias: true
 });
@@ -25,58 +26,57 @@ scene.add(light);
 const ambient = new THREE.AmbientLight(0x404040, 2);
 scene.add(ambient);
 
-// ===== COMPUTER (SIMPLIFIED 3D MODEL) =====
+// ===== 3D COMPUTER =====
 
 // Screen
-const screenGeometry = new THREE.BoxGeometry(3, 2, 0.2);
-const screenMaterial = new THREE.MeshStandardMaterial({
-  color: 0x111111,
-});
-const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+const screen = new THREE.Mesh(
+  new THREE.BoxGeometry(3, 2, 0.2),
+  new THREE.MeshStandardMaterial({ color: 0x111111 })
+);
 screen.position.y = 1;
 scene.add(screen);
 
 // Keyboard
-const keyboardGeometry = new THREE.BoxGeometry(3, 0.2, 1.5);
-const keyboardMaterial = new THREE.MeshStandardMaterial({
-  color: 0x333333,
-});
-const keyboard = new THREE.Mesh(keyboardGeometry, keyboardMaterial);
+const keyboard = new THREE.Mesh(
+  new THREE.BoxGeometry(3, 0.2, 1.5),
+  new THREE.MeshStandardMaterial({ color: 0x333333 })
+);
 keyboard.position.y = -1;
 scene.add(keyboard);
 
-// Base stand
-const baseGeometry = new THREE.BoxGeometry(0.5, 1, 0.5);
-const baseMaterial = new THREE.MeshStandardMaterial({
-  color: 0x222222,
-});
-const base = new THREE.Mesh(baseGeometry, baseMaterial);
+// Base
+const base = new THREE.Mesh(
+  new THREE.BoxGeometry(0.5, 1, 0.5),
+  new THREE.MeshStandardMaterial({ color: 0x222222 })
+);
 base.position.y = 0;
 scene.add(base);
 
-// ===== CAMERA POSITION =====
+// Camera position
 camera.position.z = 6;
 
-// ===== PARALLAX SCROLL EFFECT =====
+// ===== SCROLL =====
 let scrollY = 0;
 
 window.addEventListener("scroll", () => {
   scrollY = window.scrollY;
 });
 
-// Smooth animation loop
+// ===== ANIMATION LOOP =====
 function animate() {
   requestAnimationFrame(animate);
 
-  // Parallax movement
+  const t = Date.now() * 0.001;
+
+  // Parallax
   screen.rotation.y = scrollY * 0.0005;
   keyboard.rotation.y = scrollY * 0.0005;
 
   camera.position.y = -scrollY * 0.002;
 
-  // subtle floating animation
-  screen.position.x = Math.sin(Date.now() * 0.001) * 0.1;
-  keyboard.position.x = Math.sin(Date.now() * 0.001) * 0.1;
+  // Floating animation
+  screen.position.x = Math.sin(t) * 0.1;
+  keyboard.position.x = Math.sin(t) * 0.1;
 
   renderer.render(scene, camera);
 }
